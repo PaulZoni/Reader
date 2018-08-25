@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Reader</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_home">Страница</string>
+    <string name="title_search">Поиск</string>
+    <string name="title_settings">Настройки</string>
+</resources>
