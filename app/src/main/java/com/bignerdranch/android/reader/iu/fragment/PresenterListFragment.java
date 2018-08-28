@@ -23,7 +23,7 @@ public class PresenterListFragment implements ContractReader.Presenter {
     }
 
     @Override
-    public String readText() {
-       return mManager.load();
+    public String readText(String path) {
+       return mManager.load(path);
     }
 }

@@ -8,6 +8,6 @@ public interface ContractReader {
 
     interface View extends BaseView<Presenter> {}
     interface Presenter extends BasePresenter {
-        String readText();
+        String readText(String path);
     }
 }

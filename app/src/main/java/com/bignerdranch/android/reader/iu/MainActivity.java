@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import com.bignerdranch.android.reader.R;
+import com.bignerdranch.android.reader.constants.Constants;
 import com.bignerdranch.android.reader.iu.fragment.FileFragment;
 import com.bignerdranch.android.reader.iu.fragment.ReadListFragment;
 import butterknife.BindView;
@@ -19,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity  implements BaseActivity{
 
-    @BindView(R.id.navigation)  BottomNavigationView mBottomNavigationView;
+    @BindView(R.id.navigation) BottomNavigationView mBottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +60,6 @@ public class MainActivity extends AppCompatActivity  implements BaseActivity{
         });
     }
 
-    public void go(){}
-
     private void addFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.grant_fragment,fragment)
@@ -68,7 +67,11 @@ public class MainActivity extends AppCompatActivity  implements BaseActivity{
     }
 
     @Override
-    public void startFragment(int number) {
-
+    public void startFragment(String path) {
+        Fragment rListFragment = new ReadListFragment();
+        Bundle bundleSent = new Bundle();
+        bundleSent.putString(Constants.PATH_FILE, path);
+        rListFragment.setArguments(bundleSent);
+        addFragment(rListFragment);
     }
 }

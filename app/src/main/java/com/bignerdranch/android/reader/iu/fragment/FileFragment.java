@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.bignerdranch.android.reader.R;
 import com.bignerdranch.android.reader.iu.BaseActivity;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +67,7 @@ public class FileFragment extends ListFragment {
             //listener when YES button clicked
             DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                    Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("file://" + aDirectory.getAbsolutePath()));
-                    startActivity(i);
+                    mBaseActivity.startFragment(aDirectory.getAbsolutePath());
                 }
             };
             new AlertDialog.Builder(getContext())
@@ -116,7 +114,6 @@ public class FileFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         int selectionRowID = position;
         String selectedFileString = this.directoryEntries.get(selectionRowID);
-
         //if we select ".." then go upper
         if(selectedFileString.equals("..")){
             this.upOneLevel();
@@ -127,5 +124,4 @@ public class FileFragment extends ListFragment {
                 this.browseTo(clickedFile);
         }
     }
-
 }

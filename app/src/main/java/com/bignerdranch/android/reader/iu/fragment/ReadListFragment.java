@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.bignerdranch.android.reader.R;
+import com.bignerdranch.android.reader.constants.Constants;
 import com.bignerdranch.android.reader.iu.adapter.ListAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,10 @@ public class ReadListFragment extends Fragment implements ContractReader.View {
         parentViewActivity = inflater.inflate(R.layout.fragment_list, container, false);
 
         initializationComponent();
-        testList();
+        Bundle bundle = this.getArguments();
+        if (bundle != null){
+            createContentList(bundle.getString(Constants.PATH_FILE, ""));
+        }else createContentList("");
         createPage();
         return parentViewActivity;
     }
@@ -75,8 +79,9 @@ public class ReadListFragment extends Fragment implements ContractReader.View {
         mRecyclerView.setAdapter(listAdapter);
     }
 
-    private void testList(){
+    private void createContentList(String text){
         listText = new ArrayList<>();
-        listText.add(mPresenter.readText());
+        if (text.equals("")) listText.add("Hello");
+        else listText.add(mPresenter.readText(text));
     }
 }
