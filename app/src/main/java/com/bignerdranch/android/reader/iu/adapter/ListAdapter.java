@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.bignerdranch.android.reader.R;
-
 import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private List<String> textInList;
@@ -37,10 +37,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTextView;
+        @BindView(R.id.text_in_list) TextView mTextView;
         ViewHolder(View itemView) {
             super(itemView);
-            mTextView = itemView.findViewById(R.id.text_in_list);
+            ButterKnife.bind(this, itemView);
+            //mTextView = itemView.findViewById(R.id.text_in_list);
         }
     }
 }

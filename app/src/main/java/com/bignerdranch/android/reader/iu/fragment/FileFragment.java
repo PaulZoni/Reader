@@ -1,11 +1,7 @@
 package com.bignerdranch.android.reader.iu.fragment;
 
 import android.content.Context;
-
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.icu.text.IDNA;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -22,14 +18,18 @@ import com.bignerdranch.android.reader.iu.BaseActivity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class FileFragment extends ListFragment {
 
+    private final String TRANSITION = "..";
     private View mView;
     private BaseActivity mBaseActivity;
     private List<String> directoryEntries = new ArrayList<>();
     private File currentDirectory = new File("/");
+    @BindView(R.id.titleManager) TextView titleManager;
 
     public FileFragment() {}
 
@@ -42,6 +42,7 @@ public class FileFragment extends ListFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_file, container, false);
+        ButterKnife.bind(this, mView);
         browseTo(new File(String.valueOf(Environment.getExternalStorageDirectory())));
         return mView;
     }
@@ -53,42 +54,25 @@ public class FileFragment extends ListFragment {
     }
 
     private void browseTo(final File aDirectory) {
-        //if we want to browse directory
         if (aDirectory.isDirectory()) {
-            //fill list with files from this directory
+            if (aDirectory.listFiles() == null) return;
             this.currentDirectory = aDirectory;
             fill(aDirectory.listFiles());
-
-            //set titleManager text
-            TextView titleManager = mView.findViewById(R.id.titleManager);
             titleManager.setText(aDirectory.getAbsolutePath());
         } else {
             //if we want to open file, show this dialog:
             //listener when YES button clicked
-            DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    mBaseActivity.startFragment(aDirectory.getAbsolutePath());
-                }
-            };
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Подтверждение") //title
-                    .setMessage("Хотите открыть файл "+ aDirectory.getName() + "?")
-                    .setPositiveButton("Да", okButtonListener)
-                    .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .show();
+            if (getContext() != null) createDialog(aDirectory);
         }
     }
 
     private void fill(File[] files) {
+        if (files == null) return;
+
         this.directoryEntries.clear();
 
         if (this.currentDirectory.getParent() != null)
-            this.directoryEntries.add("..");
+            this.directoryEntries.add(TRANSITION);
 
         for (File file : files) {
             this.directoryEntries.add(file.getAbsolutePath());
@@ -103,7 +87,6 @@ public class FileFragment extends ListFragment {
         mBaseActivity = (BaseActivity) context;
     }
 
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -112,10 +95,9 @@ public class FileFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        int selectionRowID = position;
-        String selectedFileString = this.directoryEntries.get(selectionRowID);
+        String selectedFileString = this.directoryEntries.get(position);
         //if we select ".." then go upper
-        if(selectedFileString.equals("..")){
+        if(selectedFileString.equals(TRANSITION)){
             this.upOneLevel();
         } else {
             //browse to clicked file or directory using browseTo()
@@ -123,5 +105,24 @@ public class FileFragment extends ListFragment {
             if (clickedFile != null)
                 this.browseTo(clickedFile);
         }
+    }
+
+    private void createDialog(final File aDirectory) {
+        DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                mBaseActivity.startFragment(aDirectory.getAbsolutePath());
+            }
+        };
+        if (getContext() != null) new AlertDialog.Builder(getContext())
+                .setTitle("Подтверждение") //title
+                .setMessage("Хотите открыть файл "+ aDirectory.getName() + "?")
+                .setPositiveButton("Да", okButtonListener)
+                .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
     }
 }
