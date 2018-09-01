@@ -41,7 +41,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            //mTextView = itemView.findViewById(R.id.text_in_list);
         }
     }
 }

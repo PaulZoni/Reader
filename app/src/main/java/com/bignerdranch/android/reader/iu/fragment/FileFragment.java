@@ -60,20 +60,15 @@ public class FileFragment extends ListFragment {
             fill(aDirectory.listFiles());
             titleManager.setText(aDirectory.getAbsolutePath());
         } else {
-            //if we want to open file, show this dialog:
-            //listener when YES button clicked
             if (getContext() != null) createDialog(aDirectory);
         }
     }
 
     private void fill(File[] files) {
         if (files == null) return;
-
         this.directoryEntries.clear();
-
         if (this.currentDirectory.getParent() != null)
             this.directoryEntries.add(TRANSITION);
-
         for (File file : files) {
             this.directoryEntries.add(file.getAbsolutePath());
         }
@@ -96,7 +91,6 @@ public class FileFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         String selectedFileString = this.directoryEntries.get(position);
-        //if we select ".." then go upper
         if(selectedFileString.equals(TRANSITION)){
             this.upOneLevel();
         } else {
