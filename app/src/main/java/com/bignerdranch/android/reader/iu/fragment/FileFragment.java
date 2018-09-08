@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.bignerdranch.android.reader.R;
+import com.bignerdranch.android.reader.constants.Constants;
 import com.bignerdranch.android.reader.iu.BaseActivity;
 import java.io.File;
 import java.util.ArrayList;
@@ -104,7 +105,14 @@ public class FileFragment extends ListFragment {
     private void createDialog(final File aDirectory) {
         DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                mBaseActivity.startFragment(aDirectory.getAbsolutePath());
+                switch (formatCheck(aDirectory)) {
+                    case Constants.TXT:
+                        mBaseActivity.startFragment(aDirectory.getAbsolutePath(), Constants.TXT);
+                        break;
+                    case ".pdf":
+                        mBaseActivity.startFragment(aDirectory.getAbsolutePath(), Constants.PDF);
+                        break;
+                }
             }
         };
         if (getContext() != null) new AlertDialog.Builder(getContext())
@@ -118,5 +126,10 @@ public class FileFragment extends ListFragment {
                     }
                 })
                 .show();
+    }
+
+    private String formatCheck(File file) {
+        int index = file.toString().indexOf('.');
+        return index == -1? null : file.toString().substring(index);
     }
 }

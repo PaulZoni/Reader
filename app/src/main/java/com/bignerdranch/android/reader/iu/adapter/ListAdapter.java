@@ -1,46 +1,64 @@
 package com.bignerdranch.android.reader.iu.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import com.bignerdranch.android.reader.R;
-import java.util.List;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.bignerdranch.android.reader.iu.adapter.helper.BaseFileHelper;
+import com.bignerdranch.android.reader.iu.adapter.helper.FactoryFileHelper;
+import com.bignerdranch.android.reader.iu.adapter.holder.BaseHolder;
+import com.bignerdranch.android.reader.iu.adapter.holder.FactoryViewHolder;
+import java.io.File;
+import java.io.IOException;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
-    private List<String> textInList;
+public class ListAdapter extends RecyclerView.Adapter<BaseHolder> {
 
-    public ListAdapter(List<String> textInList) {
-        this.textInList = textInList;
+    private ListenerPage listenerPage;
+    private BaseFileHelper fileHelper;
+    private String typeFile;
+
+    public ListAdapter(Context context, String typeFile, File file) throws IOException {
+        initializationsHelper(typeFile);
+        fileHelper.open(context, file);
+    }
+
+    public ListAdapter(Context context, String typeFile, String file) throws IOException {
+        initializationsHelper(typeFile);
+        fileHelper.open(context, file);
+    }
+
+    private void initializationsHelper(String typeFile) {
+        this.typeFile = typeFile;
+        fileHelper = FactoryFileHelper.getHelper(typeFile);
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_book, parent,false);
-        return new ViewHolder(view);
+    public BaseHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewTpe) {
+        View view = LayoutInflater
+                .from(viewGroup.getContext())
+                .inflate(FactoryAdapterLayout.getLayoutAdapter(typeFile), viewGroup, false);
+        return FactoryViewHolder.returnHolder(typeFile, view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.mTextView.setText(textInList.get(position));
+    public void onBindViewHolder(@NonNull BaseHolder pdfHolder, int position) {
+        pdfHolder.setContextView(fileHelper.pageRender(position));
+        listenerPage.positionChange(position);
     }
 
     @Override
     public int getItemCount() {
-        return textInList.size();
+        return fileHelper.getPageCount();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.text_in_list) TextView mTextView;
-        ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
+    public void addListener(ListenerPage listenerPage){
+        this.listenerPage = listenerPage;
+    }
+
+    public interface ListenerPage {
+        void positionChange(int position);
     }
 }

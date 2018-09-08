@@ -11,23 +11,27 @@ import android.support.v7.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.bignerdranch.android.reader.R;
 import com.bignerdranch.android.reader.constants.Constants;
 import com.bignerdranch.android.reader.iu.adapter.ListAdapter;
-import java.util.ArrayList;
-import java.util.List;
+import com.bignerdranch.android.reader.state.StateManager;
+import java.io.File;
+import java.io.IOException;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
-public class ReadListFragment extends Fragment implements ContractReader.View {
+public class ReadListFragment extends Fragment implements ContractReader.View , ListAdapter.ListenerPage{
 
+    @BindView(R.id.recycler_view_list) RecyclerView mRecyclerView;
     private ContractReader.Presenter mPresenter;
-    private RecyclerView mRecyclerView;
-    private View parentViewActivity;
-    private List<String> listText;
+    private int positionPage = 0;
+    private int currentPosition = 0;
+    private String typeFile;
+    private String path;
 
-    public ReadListFragment() {
-        // Required empty public constructor
-    }
+    public ReadListFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,14 +41,15 @@ public class ReadListFragment extends Fragment implements ContractReader.View {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        parentViewActivity = inflater.inflate(R.layout.fragment_list, container, false);
+        View parentViewActivity = inflater.inflate(R.layout.fragment_list, container, false);
+        ButterKnife.bind(this, parentViewActivity);
 
-        initializationComponent();
-        Bundle bundle = this.getArguments();
-        if (bundle != null){
-            createContentList(bundle.getString(Constants.PATH_FILE, ""));
-        }else createContentList("");
-        createPage();
+        if (StateManager.StateReadList.isReadListDestroy()) {
+            path = StateManager.StateReadList.getPath();
+            typeFile = StateManager.StateReadList.getTypeFile();
+            createPage(path, typeFile);
+            StateManager.StateReadList.setReadListDestroy(false);
+        }else checkBundle();
         return parentViewActivity;
     }
 
@@ -58,6 +63,13 @@ public class ReadListFragment extends Fragment implements ContractReader.View {
     @Override
     public void onDetach() {
         super.onDetach();
+        if (path != null && typeFile != null ) {
+            StateManager.StateReadList.setReadListDestroy(true);
+            StateManager.StateReadList.setPageNumber(currentPosition);
+            StateManager.StateReadList.setTypeFile(typeFile);
+            StateManager.StateReadList.setPath(path);
+        }
+        mPresenter.detach();
     }
 
     @Override
@@ -65,23 +77,50 @@ public class ReadListFragment extends Fragment implements ContractReader.View {
         super.onDestroy();
     }
 
-    private void initializationComponent() {
-        mRecyclerView = parentViewActivity.findViewById(R.id.recycler_view_list);
+    private void checkBundle() {
+        Bundle bundle = this.getArguments();
+        if (bundle != null){
+            typeFile = bundle.getString(Constants.TYPE_FILE_KEY);
+            path = bundle.getString(Constants.PATH_FILE, "");
+            createPage(path, typeFile);
+        }
     }
 
-    private void createPage() {
+    private void createPage(String path, String typeFile) {
+        File file = new File(path);
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(mRecyclerView);
-        ListAdapter listAdapter = new ListAdapter(listText);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-                LinearLayoutManager.HORIZONTAL,
-                false));
-        mRecyclerView.setAdapter(listAdapter);
+        ListAdapter listAdapter = null;
+        try {
+            listAdapter = new ListAdapter( getActivity(), typeFile, file);
+            listAdapter.addListener(this);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false));
+            mRecyclerView.setAdapter(listAdapter);
+            listenerPage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void createContentList(String text){
-        listText = new ArrayList<>();
-        if (text.equals("")) listText.add("Hello");
-        else listText.add(mPresenter.readText(text));
+    private void listenerPage() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (positionPage != currentPosition) {
+                        Toast.makeText( getContext() , "pageCount = " + positionPage, Toast.LENGTH_LONG).show();
+                        currentPosition = positionPage;
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void positionChange(int position) {
+        this.positionPage = position;
     }
 }

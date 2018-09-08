@@ -85,11 +85,14 @@ public class MainActivity extends AppCompatActivity  implements BaseActivity{
     }
 
     @Override
-    public void startFragment(String path) {
+    public void startFragment(String path, String format) {
         Fragment rListFragment = new ReadListFragment();
         Bundle bundleSent = new Bundle();
+        bundleSent.putString(Constants.TYPE_FILE_KEY, format);
         bundleSent.putString(Constants.PATH_FILE, path);
         rListFragment.setArguments(bundleSent);
+        StateManager.StateApp.setStateFragment(Constants.FRAG1);
+        mBottomNavigationView.setSelectedItemId( R.id.navigation_home);
         addFragment(rListFragment);
     }
 
