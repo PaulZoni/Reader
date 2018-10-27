@@ -3,11 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".iu.fragment.ReadListFragment">
+
+    <LinearLayout
+        android:id="@+id/view_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/image"
+            android:src="@drawable/file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ImageView>
+    </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <com.bignerdranch.android.reader.iu.view.MovableFloatingActionButton
+        android:id="@+id/buttonRight"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="6dp"
+        />
+    <com.bignerdranch.android.reader.iu.view.MovableFloatingActionButton
+        android:id="@+id/buttonLeft"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="8dp"
+        android:elevation="6dp"
+        app:backgroundTint="@color/material_blue_500"
+        />
 
 </FrameLayout>

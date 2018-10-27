@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.bignerdranch.android.reader"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -31,13 +31,21 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-
+    implementation'com.melnykov:floatingactionbutton:1.3.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
+
+
+    implementation 'com.jsibbold:zoomage:1.2.0'
+
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
 
 android {
     aaptOptions {
         noCompress "pdf"
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }

@@ -24,6 +24,7 @@ public class FileHelperPdf implements BaseFileHelper <Bitmap, File>{
                 rendererPageWidth,
                 rendererPageHeight,
                 Bitmap.Config.ARGB_8888);
+
         rendererPage.render(bitmap, null, null,
                 PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
 

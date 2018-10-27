@@ -7,14 +7,16 @@
     android:orientation="vertical">
 
     <TableRow>
-        <TextView android:id="@+id/titleManager"
+        <TextView
+            android:id="@+id/titleManager"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:padding="5dip"
             />
     </TableRow>
     <TableRow>
-        <ListView android:id="@id/android:list"
+        <ListView
+            android:id="@+id/android:list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="2"

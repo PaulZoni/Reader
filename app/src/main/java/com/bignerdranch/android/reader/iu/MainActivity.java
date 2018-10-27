@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import com.bignerdranch.android.reader.R;
 import com.bignerdranch.android.reader.constants.Constants;
 import com.bignerdranch.android.reader.iu.fragment.FileFragment;
@@ -19,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity  implements BaseActivity{
+public class MainActivity extends AppCompatActivity  implements BaseActivity {
 
     private int currentPageId = -1;
     @BindView(R.id.navigation) BottomNavigationView mBottomNavigationView;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity  implements BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        noActionBar();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         if (StateManager.StateApp.isMainActivityDestroy()) {
@@ -111,5 +114,10 @@ public class MainActivity extends AppCompatActivity  implements BaseActivity{
     protected void onDestroy() {
         super.onDestroy();
         StateManager.StateApp.setMainActivityDestroy(true);
+    }
+
+    private void noActionBar() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }

@@ -10,14 +10,15 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import com.bignerdranch.android.reader.R;
 import com.bignerdranch.android.reader.constants.Constants;
 import com.bignerdranch.android.reader.iu.BaseActivity;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +46,8 @@ public class FileFragment extends ListFragment {
         mView = inflater.inflate(R.layout.fragment_file, container, false);
         ButterKnife.bind(this, mView);
         browseTo(new File(String.valueOf(Environment.getExternalStorageDirectory())));
+
+
         return mView;
     }
 
@@ -73,7 +76,19 @@ public class FileFragment extends ListFragment {
         for (File file : files) {
             this.directoryEntries.add(file.getAbsolutePath());
         }
-        ArrayAdapter<String> directoryList = new ArrayAdapter<>(getContext(), R.layout.row, this.directoryEntries);
+        String [] from = {"txt", "cur"};
+
+        int[] to={R.id.text, R.id.image_icon};
+            List<HashMap<String,Object>> aList = new ArrayList<>();
+
+        for(int i=0;i<this.directoryEntries.size() ;i++){
+            HashMap<String, Object> hm = new HashMap<>();
+            hm.put("txt",  this.directoryEntries.get(i));
+            hm.put("cur", formatCheckForImage(this.directoryEntries.get(i)));
+
+            aList.add(hm);
+        }
+        SimpleAdapter directoryList = new SimpleAdapter (getContext(), aList,R.layout.row ,from , to);
         this.setListAdapter(directoryList);
     }
 
@@ -86,7 +101,6 @@ public class FileFragment extends ListFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-
     }
 
     @Override
@@ -95,7 +109,6 @@ public class FileFragment extends ListFragment {
         if(selectedFileString.equals(TRANSITION)){
             this.upOneLevel();
         } else {
-            //browse to clicked file or directory using browseTo()
             File clickedFile = new File(selectedFileString);
             if (clickedFile != null)
                 this.browseTo(clickedFile);
@@ -103,16 +116,14 @@ public class FileFragment extends ListFragment {
     }
 
     private void createDialog(final File aDirectory) {
-        DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-                switch (formatCheck(aDirectory)) {
-                    case Constants.TXT:
-                        mBaseActivity.startFragment(aDirectory.getAbsolutePath(), Constants.TXT);
-                        break;
-                    case ".pdf":
-                        mBaseActivity.startFragment(aDirectory.getAbsolutePath(), Constants.PDF);
-                        break;
-                }
+        DialogInterface.OnClickListener okButtonListener = (arg0, arg1) -> {
+            switch (formatCheck(aDirectory)) {
+                case Constants.TXT:
+                    mBaseActivity.startFragment(aDirectory.getAbsolutePath(), Constants.TXT);
+                    break;
+                case ".pdf":
+                    mBaseActivity.startFragment(aDirectory.getAbsolutePath(), Constants.PDF);
+                    break;
             }
         };
         if (getContext() != null) new AlertDialog.Builder(getContext())
@@ -131,5 +142,21 @@ public class FileFragment extends ListFragment {
     private String formatCheck(File file) {
         int index = file.toString().indexOf('.');
         return index == -1? null : file.toString().substring(index);
+    }
+
+    private Object formatCheckForImage(String file) {
+        int index = file.indexOf('.');
+        String format;
+        if (index == -1)  return R.drawable.folder;
+        else {
+            format = file.substring(index);
+            switch (format){
+                case Constants.PDF:
+                    return R.drawable.file;
+                case Constants.TXT:
+                    return R.drawable.file;
+            }
+        }
+        return R.drawable.folder;
     }
 }

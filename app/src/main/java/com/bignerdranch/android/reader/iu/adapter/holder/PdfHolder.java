@@ -3,17 +3,22 @@ package com.bignerdranch.android.reader.iu.adapter.holder;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.ImageView;
-
 import com.bignerdranch.android.reader.R;
+import com.jsibbold.zoomage.ZoomageView;
 
-public  class PdfHolder extends BaseHolder<Bitmap>  {
+public class PdfHolder extends BaseHolder<Bitmap>  {
 
-    private ImageView pdfView;
+    private ZoomageView pdfView;
 
-    public PdfHolder(@NonNull View itemView){
+    public PdfHolder(@NonNull View itemView) {
         super(itemView);
         pdfView = itemView.findViewById(R.id.pdfview);
+        pdfView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                System.out.println("ZOM");
+            }
+        });
     }
 
     @Override
